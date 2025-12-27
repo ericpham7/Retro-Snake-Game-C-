@@ -1,10 +1,13 @@
-cmake_minimum_required(VERSION 4.0)
+cmake_minimum_required(VERSION 4.0.2)
 project(untitled11)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(untitled11 snakeGamee.cpp snake.cpp
-        snake.cpp)
+add_executable(untitled11
+        snakeGamee.cpp
+        snake.cpp
+        Food.cpp
+)
 
 find_package(raylib REQUIRED)
 
