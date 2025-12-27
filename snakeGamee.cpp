@@ -4,17 +4,17 @@ using namespace std;
 #include <raymath.h>
 #include <deque>
 using namespace std;
+#include "snake.h"
 
-Color green = {173, 204, 96, 255};
-Color darkGreen = {43, 51, 24, 255};
+extern Color green = {173, 204, 96, 255};
+extern Color darkGreen = {43, 51, 24, 255};
 
 int cellSize = 30; // 30 pixels
 int cellCount = 25; // 25 cells on each row of grid
 int offset = 75; // width of window borders
-
 double lastUpdateTime = 0;
+const double moveInterval = 0.2;   // snake moves every 0.2s (used for smooth interpolation)
 
-// to check if food object respawns too close to snake
 bool elementInDeque(Vector2 element, deque<Vector2> deque) {
     for (unsigned int i = 0; i < deque.size(); i++) {
         if (deque[i] == element) {
@@ -31,37 +31,6 @@ bool eventTriggered(double interval) {
         return true;
     }
     return false;
-};
-
-class Snake {
-public:
-    deque<Vector2> body = { Vector2{6,9}, Vector2{5,9}, Vector2{4,9} };
-    Vector2 direction = {1, 0};
-    bool addSegment = false;
-    
-    void Draw() {
-        for (int i = 0; i < body.size(); i++) {
-            Rectangle segment = Rectangle( offset + body[i].x * cellSize, offset + body[i].y*cellSize, (float)cellSize, (float)cellSize );
-            DrawRectangleRounded(segment, 0.5, 6, darkGreen);
-        }
-    }
-
-    void Update() {
-        if (addSegment == true) {
-            body.push_front(body[0] + direction);
-            addSegment = false;
-        }
-        else {
-            body.pop_back(); // remove tail of snake
-            body.push_front(Vector2Add(body[0], direction)); // add head
-        }
-    }
-
-    // reset snakes body to original spawn position
-    void reset() {
-        body = { Vector2{6,9}, Vector2{5,9}, Vector2{4,9} };
-        direction = {1,0};
-    }
 };
 
 // Food Objects
@@ -197,10 +166,10 @@ int main () {
         
         
         // snake movement update
-        if (eventTriggered(0.2)) {
+        if (eventTriggered(moveInterval)) {
             game.Update();
         }
-        
+
         if (IsKeyPressed(KEY_UP) && game.snake.direction.y != 1) {
             game.snake.direction = {0, -1};
             game.running = true;

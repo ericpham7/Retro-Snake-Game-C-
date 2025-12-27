@@ -3,7 +3,8 @@ project(untitled11)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(untitled11 snakeGamee.cpp)
+add_executable(untitled11 snakeGamee.cpp snake.cpp
+        snake.cpp)
 
 find_package(raylib REQUIRED)
 
