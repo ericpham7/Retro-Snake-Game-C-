@@ -37,7 +37,7 @@ public:
         eatSound = LoadSound("mario.mp3");
         borderCollisionSound = LoadSound("erro.mp3");
         SetMusicVolume(backgroundSound, 0.5f);
-        SetMusicPitch(backgroundSound, 1.25f);
+        SetMusicPitch(backgroundSound, 1.05f);
         PlayMusicStream(backgroundSound);
     }
 
@@ -49,10 +49,9 @@ public:
     }
     
     void Draw() {
-        food.Draw();
         snake.Draw();
+        food.Draw(snake.body);
     }
-    
     void Update() {
         if (running) {
             snake.Update();
@@ -65,7 +64,7 @@ public:
     void CheckCollisionWithFood() {
         if (snake.body[0] == food.position) {
             PlaySound(eatSound);
-            food.position = food.GenerateRandomPosition(snake.body);
+            food.position = food.GenerateRandomCell(snake.body);
             snake.addSegment = true;
             score++;
         }
@@ -84,7 +83,7 @@ public:
 
     void GameOver() {
         snake.reset();
-        food.position = food.GenerateRandomPosition(snake.body);
+        food.position = food.GenerateRandomCell(snake.body);
         running = false;
         score = 0;
         StopMusicStream(backgroundSound);
@@ -113,18 +112,15 @@ int main () {
     
     // returns true if esc is pressed or exit button
     while (WindowShouldClose() == false) {
-        
-        UpdateMusicStream(game.backgroundSound);
-        
+        UpdateMusicStream(game.backgroundSound); // update music stream buffers (always required)
         //Prepare to render a new frame
         BeginDrawing();
-        
-        
+        // draw game objects
+        game.Draw();
         // snake movement update
         if (eventTriggered(moveInterval)) {
             game.Update();
         }
-
         if (IsKeyPressed(KEY_UP) && game.snake.direction.y != 1) {
             game.snake.direction = {0, -1};
             game.running = true;
@@ -152,12 +148,9 @@ int main () {
         // draw score text
         DrawText(TextFormat("%i", game.score), offset - 5, offset + cellSize * cellCount + 10, 40, darkGreen);
         // draw game objects (Snake and Apple)
-        game.Draw();
 
         // ends the current frames drawing phase
         EndDrawing();
-
-        UpdateMusicStream(game.backgroundSound);
         
     }
 
@@ -167,14 +160,16 @@ int main () {
     return 0;
 }
 
-bool elementInDeque(Vector2 element, deque<Vector2> deque) {
-    for (unsigned int i = 0; i < deque.size(); i++) {
+bool elementInDeque(Vector2 foodElement, deque<Vector2> deque) {
+    for (int i = 0; i < deque.size(); i++) {
         // if head position matches any apple position, return true
-        if (deque[i] == element) {
+        if (deque[i] == foodElement) {
             return true;
         }
+        else {
+            return false;
+        }
     }
-    return false;
 }
 bool eventTriggered(double interval) {
     double currentTime = GetTime();

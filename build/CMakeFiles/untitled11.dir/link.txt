@@ -1,0 +1,1 @@
+/usr/bin/clang++ -g -arch arm64 -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/untitled11.dir/snakeGamee.cpp.o CMakeFiles/untitled11.dir/snake.cpp.o CMakeFiles/untitled11.dir/Food.cpp.o -o untitled11  /opt/homebrew/lib/libraylib.dylib
