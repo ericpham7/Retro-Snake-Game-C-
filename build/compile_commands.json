@@ -1,0 +1,20 @@
+[
+{
+  "directory": "/Users/ericpham/Documents/GitHub/Retro-Snake-Game-C-/build",
+  "command": "/usr/bin/clang++  -isystem /opt/homebrew/include -g -std=gnu++20 -arch arm64 -o CMakeFiles/untitled11.dir/snakeGamee.cpp.o -c /Users/ericpham/Documents/GitHub/Retro-Snake-Game-C-/snakeGamee.cpp",
+  "file": "/Users/ericpham/Documents/GitHub/Retro-Snake-Game-C-/snakeGamee.cpp",
+  "output": "CMakeFiles/untitled11.dir/snakeGamee.cpp.o"
+},
+{
+  "directory": "/Users/ericpham/Documents/GitHub/Retro-Snake-Game-C-/build",
+  "command": "/usr/bin/clang++  -isystem /opt/homebrew/include -g -std=gnu++20 -arch arm64 -o CMakeFiles/untitled11.dir/snake.cpp.o -c /Users/ericpham/Documents/GitHub/Retro-Snake-Game-C-/snake.cpp",
+  "file": "/Users/ericpham/Documents/GitHub/Retro-Snake-Game-C-/snake.cpp",
+  "output": "CMakeFiles/untitled11.dir/snake.cpp.o"
+},
+{
+  "directory": "/Users/ericpham/Documents/GitHub/Retro-Snake-Game-C-/build",
+  "command": "/usr/bin/clang++  -isystem /opt/homebrew/include -g -std=gnu++20 -arch arm64 -o CMakeFiles/untitled11.dir/Food.cpp.o -c /Users/ericpham/Documents/GitHub/Retro-Snake-Game-C-/Food.cpp",
+  "file": "/Users/ericpham/Documents/GitHub/Retro-Snake-Game-C-/Food.cpp",
+  "output": "CMakeFiles/untitled11.dir/Food.cpp.o"
+}
+]
