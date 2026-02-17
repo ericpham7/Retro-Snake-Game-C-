@@ -1,0 +1,24 @@
+# Build artifacts
+build/
+*.o
+*.a
+*.dylib
+*.dSYM
+*.log
+
+# Web build toolchain
+emsdk/
+
+# Redundant raylib source (using raylib-web)
+raylib/
+
+# IDE/Editor
+.vscode/
+.DS_Store
+.idea/
+
+# Python
+__pycache__/
+
+# We KEEP raylib-web/ because it has the precompiled libraylib.a for web
+# We KEEP web/ because it has the compiled game output
