@@ -6,6 +6,7 @@ using namespace std;
 #include "snake.h"
 #include <deque>
 #include <raymath.h>
+#include <string>
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten/emscripten.h>
@@ -25,31 +26,63 @@ const double moveInterval =
 // body positions(deque elements)
 bool eventTriggered(double interval); // interval update checker
 
+std::string GetResourcePath(const char *fileName) {
+  if (FileExists(fileName)) {
+    return fileName;
+  }
+
+  const char *applicationDirectory = GetApplicationDirectory();
+  if (applicationDirectory == nullptr) {
+    return fileName;
+  }
+
+  std::string resolvedPath = applicationDirectory;
+  if (!resolvedPath.empty() && resolvedPath.back() != '/') {
+    resolvedPath += '/';
+  }
+
+  resolvedPath += fileName;
+  if (FileExists(resolvedPath.c_str())) {
+    return resolvedPath;
+  }
+
+  return fileName;
+}
+
 // Main Game class to manage game state
 class Game {
 public:
   Snake snake;
   Food food = Food(snake.body);
   int score = 0;
-  Music backgroundSound;
-  Sound eatSound;
-  Sound borderCollisionSound;
-  bool running;
+  Music backgroundSound = {0};
+  Sound eatSound = {0};
+  Sound borderCollisionSound = {0};
+  bool running = true;
 
   Game() {
-    running = true;
     InitAudioDevice();
-    backgroundSound = LoadMusicStream("backGroundSong.mp3");
-    eatSound = LoadSound("munch-sound-effect.mp3");
-    borderCollisionSound = LoadSound("erro.mp3");
-    PlayMusicStream(backgroundSound);
-    SeekMusicStream(backgroundSound, 35.5f); // ← skip to 35.5s
+    backgroundSound =
+        LoadMusicStream(GetResourcePath("backGroundSong.mp3").c_str());
+    eatSound = LoadSound(GetResourcePath("munch-sound-effect.mp3").c_str());
+    borderCollisionSound = LoadSound(GetResourcePath("erro.mp3").c_str());
+
+    if (IsMusicValid(backgroundSound)) {
+      PlayMusicStream(backgroundSound);
+      SeekMusicStream(backgroundSound, 35.5f); // skip to 35.5s
+    }
   }
 
   ~Game() {
-    UnloadMusicStream(backgroundSound);
-    UnloadSound(eatSound);
-    UnloadSound(borderCollisionSound);
+    if (IsMusicValid(backgroundSound)) {
+      UnloadMusicStream(backgroundSound);
+    }
+    if (IsSoundValid(eatSound)) {
+      UnloadSound(eatSound);
+    }
+    if (IsSoundValid(borderCollisionSound)) {
+      UnloadSound(borderCollisionSound);
+    }
     CloseAudioDevice();
   }
 
@@ -69,7 +102,9 @@ public:
 
   void CheckCollisionWithFood() {
     if (snake.body[0] == food.position) {
-      PlaySound(eatSound);
+      if (IsSoundValid(eatSound)) {
+        PlaySound(eatSound);
+      }
       food.position = food.GenerateRandomPosition(snake.body);
       snake.addSegment = true;
       score++;
@@ -78,11 +113,15 @@ public:
 
   void checkCollisionWithEdges() {
     if (snake.body[0].x == cellCount || snake.body[0].x == -1) {
-      PlaySound(borderCollisionSound);
+      if (IsSoundValid(borderCollisionSound)) {
+        PlaySound(borderCollisionSound);
+      }
       GameOver();
     }
     if (snake.body[0].y == cellCount || snake.body[0].y == -1) {
-      PlaySound(borderCollisionSound);
+      if (IsSoundValid(borderCollisionSound)) {
+        PlaySound(borderCollisionSound);
+      }
       GameOver();
     }
   }
@@ -92,7 +131,9 @@ public:
     food.position = food.GenerateRandomPosition(snake.body);
     running = false;
     score = 0;
-    StopMusicStream(backgroundSound);
+    if (IsMusicValid(backgroundSound)) {
+      StopMusicStream(backgroundSound);
+    }
   }
 
   void checkCollisionWithTail() {
@@ -100,7 +141,9 @@ public:
     headlessBody.pop_front(); // remove head element ([0])from body deque
 
     if (elementInDeque(snake.body[0], headlessBody)) {
-      PlaySound(borderCollisionSound);
+      if (IsSoundValid(borderCollisionSound)) {
+        PlaySound(borderCollisionSound);
+      }
       GameOver();
     }
   }
@@ -110,7 +153,9 @@ public:
 Game *gamePtr = nullptr;
 
 void UpdateDrawFrame(void) {
-  UpdateMusicStream(gamePtr->backgroundSound);
+  if (IsMusicValid(gamePtr->backgroundSound)) {
+    UpdateMusicStream(gamePtr->backgroundSound);
+  }
 
   BeginDrawing();
 
@@ -125,7 +170,9 @@ void UpdateDrawFrame(void) {
   if (IsKeyPressed(KEY_UP) && gamePtr->snake.direction.y != 1) {
     gamePtr->snake.direction = (Vector2){0, -1};
     gamePtr->running = true;
-    ResumeMusicStream(gamePtr->backgroundSound);
+    if (IsMusicValid(gamePtr->backgroundSound)) {
+      ResumeMusicStream(gamePtr->backgroundSound);
+    }
   }
   if (IsKeyPressed(KEY_DOWN) && gamePtr->snake.direction.y != -1) {
     gamePtr->snake.direction = (Vector2){0, 1};

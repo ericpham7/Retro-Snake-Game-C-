@@ -1,6 +1,7 @@
 #pragma once
 #include "raylib.h"
 #include <deque>
+#include <string>
 
 // global variables (all declared here for cross-file access)
 extern Color green;
@@ -13,3 +14,4 @@ extern const double moveInterval;
 
 bool elementInDeque(Vector2 element, const std::deque<Vector2> &deque);
 bool eventTriggered(double interval);
+std::string GetResourcePath(const char *fileName);

@@ -8,23 +8,30 @@ using namespace std;
 
 // Food Object Constructor
 Food::Food(const deque<Vector2> &snakeBody) {
-  Image image = LoadImage("greenapple.png");
-  ImageResize(&image, cellSize, cellSize); // Resize food image to 30x30 pixels
-  texture = LoadTextureFromImage(image);
-  UnloadImage(image);              // unload image to free memory
+  texture = {0};
+
+  Image image = LoadImage(GetResourcePath("greenapple.png").c_str());
+  if (IsImageValid(image)) {
+    ImageResize(&image, cellSize, cellSize); // Resize food image to 30x30 pixels
+    texture = LoadTextureFromImage(image);
+    UnloadImage(image); // unload image to free memory
+  }
+
   position = GenerateRandomCell(); // set initial food position
 }
 
 // Texture destructor
 Food::~Food() {
-  UnloadTexture(
-      texture); // unload texture to free memory after food object is destroyed
+  if (IsTextureValid(texture)) {
+    UnloadTexture(texture); // unload texture to free memory after food object is destroyed
+  }
 }
 
 // Draw Food on Screen Method
 void Food::Draw() {
-  DrawTexture(texture, offset + position.x * cellSize,
-              offset + position.y * cellSize, WHITE);
+  if (IsTextureValid(texture)) {
+    DrawTexture(texture, offset + position.x * cellSize,offset + position.y * cellSize, WHITE);
+  }
 }
 
 // Position Randomizer
